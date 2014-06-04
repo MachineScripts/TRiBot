@@ -12,7 +12,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Tree
-        implements Runnable
 {
     private LinkedList<Node> list;
     private Lock threadLock;
@@ -123,62 +122,4 @@ public class Tree
         return string;
     }
 
-    private void threadedTasks() {
-        try {
-            if ((!this.thread.isInterrupted()) && (!this.secondThread.isInterrupted()) && (!this.thirdThread.isInterrupted())) {
-                this.threadLock.lock();
-                for (Node aList : this.list)
-                    if (aList.activate())
-                        aList.execute();
-            }
-        }
-        catch (ArrayIndexOutOfBoundsException e)
-        {
-            System.out.println("Out of Bounds Exception");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        finally {
-            this.threadLock.unlock();
-        }
-    }
-
-    public boolean runConcurrentTasks() {
-        if ((this.thread == null) && (this.secondThread == null) && (this.thirdThread == null)) {
-            this.thread = new Thread(this);
-            this.secondThread = new Thread(this);
-            this.thirdThread = new Thread(this);
-            this.thirdThread.start();
-            this.secondThread.start();
-            this.thread.start();
-
-            return true;
-        }
-        return false;
-    }
-
-    public void terminateThread() {
-        if ((this.thread != null) && (this.secondThread != null)) {
-            this.thread.interrupt();
-            this.secondThread.interrupt();
-            this.thirdThread.interrupt();
-        }
-    }
-
-    public void run()
-    {
-        try
-        {
-            while ((!Thread.interrupted()) && (!this.thirdThread.isInterrupted()) && (!this.secondThread.isInterrupted())) {
-                threadedTasks();
-                Thread.sleep(69L);
-            }
-        }
-        catch (InterruptedException e)
-        {
-            e.printStackTrace();
-            System.out.println("Thread interrupted, terminating with stacktrace:");
-        }
-    }
 }
